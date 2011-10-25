@@ -25,7 +25,7 @@ namespace ProcessTree {
 
 			string line = null;
 			while ((line = Console.ReadLine()) != null) {
-				var words = line.Split(ws, StringSplitOptions.RemoveEmptyEntries);
+				var words = line.Substring(0, iCmd).Split(ws, StringSplitOptions.RemoveEmptyEntries);
 				var pid = int.Parse(words[iPid]);
 				pMap[pid] = new Proc(pid, int.Parse(words[iPpid]), line.Substring(iCmd));
 			}
