@@ -3,15 +3,13 @@ using System.IO;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-using Proc = System.Tuple<int, int, string>;
-
 namespace ProcessTree {
 	
 	class ProcessTree {
 
 		public static void Main (string[] args) { new ProcessTree().Run(args); }
 		
-		readonly IDictionary<int, Proc> pMap = new Dictionary<int, Proc>();
+		readonly IDictionary<int, String> cMap = new Dictionary<int, String>();
 		readonly IDictionary<int, ICollection<int>> tMap = new Dictionary<int, ICollection<int>>();
 		readonly TextWriter bOut = new StreamWriter(new BufferedStream(Console.OpenStandardOutput()));
 		
@@ -27,11 +25,10 @@ namespace ProcessTree {
 			while ((line = Console.ReadLine()) != null) {
 				var words = line.Substring(0, iCmd).Split(ws, StringSplitOptions.RemoveEmptyEntries);
 				var pid = int.Parse(words[iPid]);
-				pMap[pid] = new Proc(pid, int.Parse(words[iPpid]), line.Substring(iCmd));
-			}
-			foreach (var p in pMap.Values) {
-				if (! tMap.ContainsKey(p.Item2)) { tMap[p.Item2] = new List<int>(8); }
-				tMap[p.Item2].Add(p.Item1);
+				var ppid = int.Parse(words[iPpid]);
+				cMap[pid] = line.Substring(iCmd);
+				if (! tMap.ContainsKey(ppid)) { tMap[ppid] = new List<int>(8); }
+				tMap[ppid].Add(pid);
 			}
 
 			foreach (var k in tMap[0]) PrintTree(0, k);
@@ -43,7 +40,7 @@ namespace ProcessTree {
 			bOut.Write(i);
 			bOut.Write(':');
 			bOut.Write(' ');
-			bOut.Write(pMap[i].Item3);
+			bOut.Write(cMap[i]);
 			bOut.Write('\n');
 			if (tMap.ContainsKey(i))
 				foreach (var k in tMap[i]) PrintTree(l + 1, k);
